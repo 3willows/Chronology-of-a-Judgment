@@ -51,7 +51,7 @@ export function Home() {
     <div className="container mx-auto p-4 space-y-8">
       <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle>Judgment to Chronology</CardTitle>
+          <CardTitle>Judgment to Rough Chronology</CardTitle>
           <CardDescription>
             Enter a link to a Judgment from the National Archive's{" "}
             <a
@@ -96,14 +96,14 @@ export function Home() {
         <Card className="w-full max-w-2xl mx-auto">
           <CardContent className="text-center py-8">
             <Loader2 className="h-8 w-8 animate-spin mx-auto" />
-            <p className="text-muted-foreground mt-2">Generating chronology...</p>
+            <p className="text-muted-foreground mt-2">Generating rough chronology...</p>
           </CardContent>
         </Card>
       ) : 
       chronology ? (
         <Card className="w-full max-w-2xl mx-auto">
           <CardHeader>
-            <CardTitle>Chronology</CardTitle>
+            <CardTitle>Rough Chronology</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
