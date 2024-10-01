@@ -127,7 +127,7 @@ export function Home() {
         </Card>
       ) : (
         <>
-          <Card>
+          <Card className="w-full max-w-2xl mx-auto">
             <CardContent className="text-left py-8 text-muted-foreground">
               <p className="text-muted-foreground">
                 <b>Quick start </b>click Search to view a rough chronology of dates from the High Court's
@@ -136,7 +136,7 @@ export function Home() {
                   className="underline"
                   target="_blank"
                   rel="noopener noreferrer"
-                > Brexit Prorogation of Parliament
+                > Prorogation of Parliament
                 </a>{" "}
                 judgment, <i>R (on the Application of Miller) v the Prime Minister [2019] EWHC 2381 (QB)</i> .
               </p>
