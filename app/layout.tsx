@@ -8,7 +8,7 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Create Chronology",
+  title: "Judgment to Rough Chronology",
   description: "With Find Case Law, Next and Supabase",
 };
 
