@@ -26,17 +26,17 @@ export async function judgmentToChronology(url: string) {
       .insert({ xml: xmlContent })
       .select('id')
       .single()
-    
-    const dateSentences = await fetchAndExtractDates(data?.id)
-    console.log(dateSentences)    
-    
+      
+    // Call utility function to extract dates 
+    const chronology = await fetchAndExtractDates(data?.id)
+    console.log(chronology)    
     if (error) {
       console.error("Error inserting data:", error)
       return null
     } else {
-      console.log("Inserted data:", data)
+      console.log("Inserted data and created chronology:", data)
       console.dir(data.id)
-      return data.id
+      return chronology
     }
   } catch (error) {
     console.error("Error fetching or processing XML:", error)
