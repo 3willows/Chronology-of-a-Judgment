@@ -32,11 +32,17 @@ export default function RootLayout({
                 {children}
               </div>
 
-              {/* <footer className="w-full flex items-center justify-center border-t mx-auto text-center gap-8 py-16">
-                <p>
-                  Repo
+              <footer className="w-full flex items-center justify-center border-t mx-auto text-center gap-8 py-16">
+                <p className="py-8">
+               The information displayed here are licensed under the <a
+                  href="https://caselaw.nationalarchives.gov.uk/open-justice-licence"
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                > Open Justice - Licence v1.0.
+                </a> 
                 </p>
-              </footer> */}
+              </footer>
             </div>
           </main>
         </ThemeProvider>
