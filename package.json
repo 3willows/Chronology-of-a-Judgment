@@ -32,6 +32,7 @@
     "@types/xml2js": "^0.4.14",
     "@typescript-eslint/eslint-plugin": "^8.8.0",
     "@typescript-eslint/parser": "^8.8.0",
+    "@vercel/style-guide": "^6.0.0",
     "eslint": "^9.11.1",
     "postcss": "8.4.33",
     "tailwind-merge": "^2.5.2",
