@@ -127,25 +127,35 @@ export function Home() {
         </Card>
       ) : (
         <>
-          <Card className="w-full max-w-2xl mx-auto">
-            <CardContent className="text-center py-8">
+          <Card>
+            <CardContent className="text-left py-8 text-muted-foreground">
               <p className="text-muted-foreground">
-                Copy and paste the URL and click Search to view the rough
-                chronology.
+                <b>Quick start </b>click Search to view a rough chronology of dates from the High Court's
+                 <a
+                  href="https://caselaw.nationalarchives.gov.uk/ewhc/qb/2019/2381"
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                > Brexit Prorogation of Parliament
+                </a>{" "}
+                judgment, <i>R (on the Application of Miller) v the Prime Minister [2019] EWHC 2381 (QB)</i> .
               </p>
             </CardContent>
           </Card>
-          {/* <Card>
-            <CardContent className="text-left py-8 text-muted-foreground">
-              <h2>In development:</h2>
-              <ol className="list-decimal list-inside ">
-                <li>Display case name in the UI</li>
-                <li>
-                  Add paragraph number as the right-most column to the table
-                </li>
-              </ol>
+          <Card className="w-full max-w-2xl mx-auto">
+            <CardContent className="text-left py-8">
+              <p className="text-muted-foreground">
+                Copy and paste the URL of any other case found <a
+              href="https://caselaw.nationalarchives.gov.uk/"
+              className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+             here 
+            </a> for a similar chronology.
+              </p>
             </CardContent>
-          </Card> */}
+          </Card>
         </>
       )}
     </div>
