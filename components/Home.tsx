@@ -51,7 +51,7 @@ export function Home() {
     <div className="container mx-auto p-4 space-y-8">
       <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle>Judgment to Rough Chronology</CardTitle>
+          <CardTitle>Judgment to Rough Chronology (Beta)</CardTitle>
           <CardDescription>
             Enter a link to a Judgment from the National Archive's{" "}
             <a
@@ -77,7 +77,7 @@ export function Home() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-               {isLoading ? (
+              {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Loading...
@@ -96,11 +96,12 @@ export function Home() {
         <Card className="w-full max-w-2xl mx-auto">
           <CardContent className="text-center py-8">
             <Loader2 className="h-8 w-8 animate-spin mx-auto" />
-            <p className="text-muted-foreground mt-2">Generating rough chronology...</p>
+            <p className="text-muted-foreground mt-2">
+              Generating rough chronology...
+            </p>
           </CardContent>
         </Card>
-      ) : 
-      chronology ? (
+      ) : chronology ? (
         <Card className="w-full max-w-2xl mx-auto">
           <CardHeader>
             <CardTitle>Rough Chronology</CardTitle>
@@ -125,13 +126,27 @@ export function Home() {
           </CardContent>
         </Card>
       ) : (
-        <Card className="w-full max-w-2xl mx-auto">
-          <CardContent className="text-center py-8">
-            <p className="text-muted-foreground">
-              Copy and paste the URL and click Search to view the rough chronology.
-            </p>
-          </CardContent>
-        </Card>
+        <>
+          <Card className="w-full max-w-2xl mx-auto">
+            <CardContent className="text-center py-8">
+              <p className="text-muted-foreground">
+                Copy and paste the URL and click Search to view the rough
+                chronology.
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="text-left py-8 text-muted-foreground">
+              <h2>In development:</h2>
+              <ol className="list-decimal list-inside ">
+                <li>Display case name in the UI</li>
+                <li>
+                  Add paragraph number as the right-most column to the table
+                </li>
+              </ol>
+            </CardContent>
+          </Card>
+        </>
       )}
     </div>
   )
