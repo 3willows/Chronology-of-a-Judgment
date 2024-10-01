@@ -2,7 +2,7 @@
 
 [here](https://judgment-to-rough-chronology.vercel.app/)
 
-## Plan
+## Initial plan
 
 - Create UI to let user to enter link to a Judgment, e.g. from the ["Find Case Law" service](https://caselaw.nationalarchives.gov.uk/uksc/2019/41) provided by the UK National Archive.
 
@@ -17,3 +17,7 @@
   - Sentence in which the date occurs.
 
 - Display the information from the backend on a table for the users, with the dates placed in chronological order.
+
+## Current bottlebeck
+
+- Finding a way to consistently parse the paragraph number.
