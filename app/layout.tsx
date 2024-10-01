@@ -34,7 +34,7 @@ export default function RootLayout({
 
               <footer className="w-full flex items-center justify-center border-t mx-auto text-center gap-8 py-16">
                 <p className="py-8">
-               The information displayed here are licensed under the <a
+               The information displayed here is licensed under the <a
                   href="https://caselaw.nationalarchives.gov.uk/open-justice-licence"
                   className="underline"
                   target="_blank"
