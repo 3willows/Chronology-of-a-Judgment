@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server"
-import { extractDatesFromXML } from "../parsingExample"
+import { extractDatesFromXML } from "../extractDatesFromXML"
 
 export default async function Index() {
   const supabase = createClient()
