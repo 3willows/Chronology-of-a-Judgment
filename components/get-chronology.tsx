@@ -5,14 +5,18 @@ import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { saveJudgment } from "@/app/saveJudgment"
 
 export function GetChronology() {
   const [url, setUrl] = useState("")
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Here you would typically handle the search action
-    // For now, we'll just log the URL
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+
+    formData.set("url", url)
+
+    const id = await saveJudgment(url)
+
     console.log("Searching for judgment:", url)
   }
 
@@ -25,7 +29,7 @@ export function GetChronology() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSearch} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col space-y-2">
             <Input
               type="url"
