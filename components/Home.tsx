@@ -128,7 +128,7 @@ export function Home() {
         <Card className="w-full max-w-2xl mx-auto">
           <CardContent className="text-center py-8">
             <p className="text-muted-foreground">
-              Enter a URL and click Search to view the chronology.
+              Copy and paste the URL and click Search to view the rough chronology.
             </p>
           </CardContent>
         </Card>
