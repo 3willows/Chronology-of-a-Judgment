@@ -28,7 +28,7 @@ interface DateSentence {
 
 export function Home() {
   const [url, setUrl] = useState(
-    "https://caselaw.nationalarchives.gov.uk/ewhc/ch/2024/2447"
+    "https://caselaw.nationalarchives.gov.uk/ewhc/qb/2019/2381?query=miller+prime+minister&from_date=None&to_date=None&party=&judge="
   )
   const [chronology, setChronology] = useState<DateSentence[] | null>(null)
   const [isLoading, setIsLoading] = useState(false)
