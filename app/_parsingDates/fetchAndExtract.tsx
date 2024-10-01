@@ -7,7 +7,7 @@ interface DateSentence {
   sentence: string;
 }
 
-export async function fetchAndExtractDates(
+export async function fetchAndExtract(
   id: number
 ): Promise<DateSentence[]> {
   const supabase = createClient()

@@ -1,7 +1,7 @@
 "use server"
 
 import { createClient } from "../utils/supabase/server"
-import { fetchAndExtractDates } from "./_parsingDates/fetchAndExtractDates"
+import { fetchAndExtract } from "./_parsingDates/fetchAndExtract"
 
 export async function judgmentToChronology(url: string) {
   "use server"
@@ -28,8 +28,8 @@ export async function judgmentToChronology(url: string) {
       .single()
       
     // Call utility function to extract dates 
-    const chronology = await fetchAndExtractDates(data?.id)
-    console.log(chronology)    
+    const chronology = await fetchAndExtract(data?.id)
+    // console.log(chronology)    
     if (error) {
       console.error("Error inserting data:", error)
       return null
