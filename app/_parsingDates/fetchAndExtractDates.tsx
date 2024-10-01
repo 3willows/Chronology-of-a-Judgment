@@ -2,7 +2,10 @@
 
 import { createClient } from "@/utils/supabase/server"
 import { extractDatesFromXML } from "./extractDatesFromXML"
-import { DateSentence } from "../parsingExample/page"
+interface DateSentence {
+  date: string;
+  sentence: string;
+}
 
 export async function fetchAndExtractDates(
   id: number
