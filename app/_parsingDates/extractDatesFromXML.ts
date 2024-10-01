@@ -24,7 +24,7 @@ export async function extractDatesFromXML(xmlContent: string): Promise<DateSente
             const text = obj[key];
             const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
             
-            sentences.forEach(sentence => {
+            sentences.forEach((sentence: string) => {
               const matches = sentence.match(dateRegex);
               if (matches) {
                 matches.forEach(date => {
