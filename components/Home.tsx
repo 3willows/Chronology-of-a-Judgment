@@ -5,9 +5,9 @@ import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { saveJudgment } from "@/app/saveJudgment"
+import { judgmentToChronology } from "@/app/judgmentToChronology"
 
-export function GetChronology() {
+export function Home() {
   const [url, setUrl] = useState("")
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {    e.preventDefault()
@@ -15,7 +15,7 @@ export function GetChronology() {
 
     formData.set("url", url)
 
-    const id = await saveJudgment(url)
+    const id = await judgmentToChronology(url)
 
     console.log("Searching for judgment:", url)
   }

@@ -1,4 +1,4 @@
-import { fetchAndExtractDates } from "./fetchAndExtractDates"
+import { fetchAndExtractDates } from "../_parsingDates/fetchAndExtractDates"
 
 export interface DateSentence {
   date: string

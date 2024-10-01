@@ -1,8 +1,9 @@
-import { createClient } from "@/utils/supabase/server"
-import { extractDatesFromXML } from "../_parsingDates/extractDatesFromXML"
-import { DateSentence } from "./page"
+"use server"
 
-// Utility function to fetch XML and extract dates with sentences
+import { createClient } from "@/utils/supabase/server"
+import { extractDatesFromXML } from "./extractDatesFromXML"
+import { DateSentence } from "../parsingExample/page"
+
 export async function fetchAndExtractDates(
   id: number
 ): Promise<DateSentence[]> {

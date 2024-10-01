@@ -1,8 +1,9 @@
 "use server"
 
 import { createClient } from "../utils/supabase/server"
+import { fetchAndExtractDates } from "./_parsingDates/fetchAndExtractDates"
 
-export async function saveJudgment(url: string) {
+export async function judgmentToChronology(url: string) {
   "use server"
   const supabase = createClient()
 
@@ -25,6 +26,9 @@ export async function saveJudgment(url: string) {
       .insert({ xml: xmlContent })
       .select('id')
       .single()
+    
+    const dateSentences = await fetchAndExtractDates(data?.id)
+    console.log(dateSentences)    
     
     if (error) {
       console.error("Error inserting data:", error)

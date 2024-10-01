@@ -1,10 +1,10 @@
-import { GetChronology } from "@/components/get-chronology"
+import { Home } from "@/components/Home"
 
 export default async function Index() {
   return (
     <>
       <div className="m-5">
-        <GetChronology />
+        <Home />
       </div>
     </>
   )
