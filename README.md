@@ -1,4 +1,4 @@
-# Aim
+[# Demo](https://judgment-to-rough-chronology.vercel.app/)
 
 ## Plan
 
@@ -12,6 +12,6 @@
 
   - Paragraph reference
 
-  - Sente3nce in which the date occurs.
+  - Sentence in which the date occurs.
 
-- Display the information from the backend on a table on the website, with the dates placed in chronological order.
+- Display the information from the backend on a table for the users, with the dates placed in chronological order.
