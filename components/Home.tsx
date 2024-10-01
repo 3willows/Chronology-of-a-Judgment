@@ -72,6 +72,9 @@ export function Home() {
                 placeholder="https://caselaw.nationalarchives.gov.uk/uksc/2019/41"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
+                onFocus={(e) => {
+                  e.target.select()
+                }}
                 required
                 disabled={isLoading}
               />
