@@ -37,10 +37,9 @@ export function Home() {
       <div>
         <Card className="w-full max-w-md mx-auto">
           <CardHeader>
-            <CardTitle>Get Chronology</CardTitle>
+            <CardTitle>Judgment to Chronology</CardTitle>
             <CardDescription>
-              Enter a link to a Judgment from the "Find Case Law" service
-              provided by the UK National Archive.
+              Enter a link to a Judgment from the National Archive's <a href="https://caselaw.nationalarchives.gov.uk/" className="underline" target="_blank" rel="noopener noreferrer">Find Case Law</a>
             </CardDescription>
           </CardHeader>
           <CardContent>
