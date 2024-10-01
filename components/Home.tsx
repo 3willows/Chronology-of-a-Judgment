@@ -135,7 +135,7 @@ export function Home() {
               </p>
             </CardContent>
           </Card>
-          <Card>
+          {/* <Card>
             <CardContent className="text-left py-8 text-muted-foreground">
               <h2>In development:</h2>
               <ol className="list-decimal list-inside ">
@@ -145,7 +145,7 @@ export function Home() {
                 </li>
               </ol>
             </CardContent>
-          </Card>
+          </Card> */}
         </>
       )}
     </div>
