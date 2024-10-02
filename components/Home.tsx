@@ -51,7 +51,7 @@ export function Home() {
     <div className="container mx-auto p-4 space-y-8">
       <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle>Judgment to Rough Chronology (Beta)</CardTitle>
+          <CardTitle>Chronology of a Judgment (Beta)</CardTitle>
           <CardDescription>
             Enter a link to a Judgment from the National Archive's{" "}
             <a
