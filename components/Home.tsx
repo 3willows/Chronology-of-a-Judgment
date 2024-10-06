@@ -24,6 +24,12 @@ interface DateSentence {
   sentence: string
 }
 
+interface Case {
+  id: string
+  title: string
+  url: string
+}
+
 export function Home() {
   const [searchQuery, setSearchQuery] = useState("")
   const [chronology, setChronology] = useState<DateSentence[] | null>(null)
@@ -87,6 +93,7 @@ export function Home() {
       } finally {
         setIsLoading(false)
       }
+
     }
   }
 
@@ -109,6 +116,7 @@ export function Home() {
             handleResultClick={handleResultClick}
             isLoading={isLoading}
           />
+
         </CardContent>
       </Card>
 
