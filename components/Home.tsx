@@ -60,16 +60,21 @@ export function Home() {
   }, [searchQuery, debouncedFetchSearchResults]);
 
   const handleResultClick = async (selectedUrl: string) => {
-    const selectedResult = searchResults.find((result) => result.url === selectedUrl);
+    const selectedResult = searchResults.find(
+      (result) => result.url === selectedUrl
+    );
+    
     if (selectedResult) {
       setSelectedCase(selectedResult); // Set selected case correctly
-      setSearchQuery(selectedUrl); // Update search query with selected URL
+      setSearchQuery(""); // Clear the search query
       setShowDropdown(false);
-
+  
       // Fetch chronology for the selected case
       setIsLoading(true);
       try {
-        const result = await judgmentToChronology(`https://caselaw.nationalarchives.gov.uk/${selectedUrl}`);
+        const result = await judgmentToChronology(
+          "https://caselaw.nationalarchives.gov.uk/" + selectedUrl
+        );
         setChronology(result);
       } catch (error) {
         console.error("Error fetching chronology:", error);
