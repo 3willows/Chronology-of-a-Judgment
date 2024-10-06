@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Search, Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/table"
 import { judgmentToChronology } from "@/app/judgmentToChronology"
 import { printResult } from "@/app/fetchParseServer"
+import { Judgment } from "@/app/fetchParse"
 
 interface DateSentence {
   date: string
@@ -28,25 +29,56 @@ interface DateSentence {
 }
 
 export function Home() {
-  const [url, setUrl] = useState(
-    "https://caselaw.nationalarchives.gov.uk/ewhc/qb/2019/2381?query=miller+prime+minister&from_date=None&to_date=None&party=&judge="
-  )
+  const [url, setUrl] = useState("")
   const [chronology, setChronology] = useState<DateSentence[] | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [searchResults, setSearchResults] = useState<Judgment[]>([])
+  const [showDropdown, setShowDropdown] = useState(false)
+
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      if (searchQuery.length > 2) {
+        setIsLoading(true)
+        try {
+          const results = await printResult()
+          if (!results)
+          {
+            throw Error("no results")
+          }
+          setSearchResults(results)
+          setShowDropdown(true)
+        } catch (error) {
+          console.error("Error fetching search results:", error)
+        } finally {
+          setIsLoading(false)
+        }
+      } else {
+        setSearchResults([])
+        setShowDropdown(false)
+      }
+    }
+
+    fetchSearchResults()
+  }, [searchQuery])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    await printResult()
     setIsLoading(true)
     try {
       const result = await judgmentToChronology(url)
       setChronology(result)
     } catch (error) {
       console.error("Error fetching chronology:", error)
-      // Optionally, you can set an error state here and display it to the user
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleResultClick = (selectedUrl: string) => {
+    setUrl(selectedUrl)
+    setShowDropdown(false)
+    setSearchQuery("")
   }
 
   return (
@@ -55,12 +87,35 @@ export function Home() {
         <CardHeader>
           <CardTitle>Chronology of a Judgment</CardTitle>
           <CardDescription>
-            Get a list of dates mentioned in a judgment, in chronological order.{" "}
+            Get a list of dates mentioned in a judgment, in chronological order.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-2 relative">
+              <Input
+                type="text"
+                placeholder="Search for a case..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full"
+              />
+              {showDropdown && (
+                <Card className="absolute top-full left-0 right-0 mt-1 max-h-60 overflow-auto z-10">
+                  <CardContent className="p-0">
+                    {searchResults.map((result, index) => (
+                      <Button
+                        key={index}
+                        variant="ghost"
+                        className="w-full justify-start text-left p-2 hover:bg-accent"
+                        onClick={() => handleResultClick(result.url)}
+                      >
+                        {result.title}
+                      </Button>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
               <Input
                 type="url"
                 placeholder="https://caselaw.nationalarchives.gov.uk/uksc/2019/41"
