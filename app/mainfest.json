@@ -1,0 +1,14 @@
+{
+  "short_name": "Chronology of a Judgment",
+  "name": "Chronology of a Judgment",
+  "icons": [
+    {
+      "app": "/favicon.ico",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
