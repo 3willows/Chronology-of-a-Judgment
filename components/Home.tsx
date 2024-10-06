@@ -35,6 +35,7 @@ export function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<Judgment[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedCase, setSelectedCase] = useState<Judgment | null>(null);
 
   // Create a debounced function for fetching search results
   const debouncedFetchSearchResults = useCallback(
@@ -64,29 +65,34 @@ export function Home() {
   // Effect to call the debounced function when searchQuery changes
   useEffect(() => {
     debouncedFetchSearchResults(searchQuery);
-
     // Cleanup function to cancel the debounce on unmount
     return () => {
       debouncedFetchSearchResults.cancel();
     };
   }, [searchQuery, debouncedFetchSearchResults]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      const result = await judgmentToChronology("https://caselaw.nationalarchives.gov.uk/" + searchQuery);
-      setChronology(result);
-    } catch (error) {
-      console.error("Error fetching chronology:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const handleResultClick = async (selectedUrl: string) => {
+    const selectedResult = searchResults.find(
+      (result) => result.url === selectedUrl
+    );
+    if (selectedResult) {
+      setSelectedCase(selectedResult); // Set selected case correctly
+      setSearchQuery(selectedUrl); // Update search query with selected URL
+      setShowDropdown(false);
 
-  const handleResultClick = (selectedUrl: string) => {
-    setSearchQuery(selectedUrl);
-    setShowDropdown(false);
+      // Fetch chronology for the selected case
+      setIsLoading(true);
+      try {
+        const result = await judgmentToChronology(
+          "https://caselaw.nationalarchives.gov.uk/" + selectedUrl
+        );
+        setChronology(result);
+      } catch (error) {
+        console.error("Error fetching chronology:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   return (
@@ -95,11 +101,12 @@ export function Home() {
         <CardHeader>
           <CardTitle>Chronology of a Judgment</CardTitle>
           <CardDescription>
-            Search for a case or enter a URL to get a list of dates mentioned in a judgment, in chronological order.
+            Search for a case or enter a URL to get a list of dates mentioned in
+            a judgment, in chronological order.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             <div className="flex flex-col space-y-2 relative">
               <Input
                 type="text"
@@ -116,7 +123,9 @@ export function Home() {
                         key={index}
                         variant="ghost"
                         className="w-full justify-start text-left p-2 hover:bg-accent"
-                        onClick={() => result.url && handleResultClick(result.url)}
+                        onClick={() =>
+                          result.url && handleResultClick(result.url)
+                        }
                       >
                         {result.title}
                       </Button>
@@ -141,6 +150,34 @@ export function Home() {
           </form>
         </CardContent>
       </Card>
+
+      {/* Display selected case information */}
+      {selectedCase && (
+        <Card className="w-full max-w-2xl mx-auto mt-8">
+          <CardHeader>
+            <CardTitle>Selected Case Details</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p><strong>Title:</strong> {selectedCase.title}</p>
+            {selectedCase.court && (
+              <p><strong>Court:</strong> {selectedCase.court}</p>
+            )}
+            {selectedCase.citation && (
+              <p><strong>Citation:</strong> {selectedCase.citation}</p>
+            )}
+            {selectedCase.date && (
+              <p><strong>Date:</strong> {selectedCase.date}</p>
+            )}
+            {selectedCase.url && (
+              <p><strong>URL:</strong> 
+                <a href={`https://caselaw.nationalarchives.gov.uk/"${selectedCase.url}`} target="_blank" rel="noopener noreferrer" className="underline">
+                  View Case
+                </a>
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Loading state for chronology generation */}
       {isLoading ? (
@@ -182,7 +219,9 @@ export function Home() {
           <Card className="w-full max-w-2xl mx-auto">
             <CardContent className="text-left py-8 text-muted-foreground">
               <p className="text-muted-foreground">
-                <b>Quick start: </b>Enter "Prime Minister" in the search bar and click on a result, or enter a URL directly to view a rough chronology of dates from a judgment.
+                <b>Quick start: </b>Enter "Prime Minister" in the search bar and
+                click on a result, or enter a URL directly to view a rough
+                chronology of dates from a judgment.
               </p>
             </CardContent>
           </Card>
