@@ -19,7 +19,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { judgmentToChronology } from "@/app/judgmentToChronology"
 
 interface DateSentence {
@@ -27,48 +26,22 @@ interface DateSentence {
   sentence: string
 }
 
-interface Case {
-  id: string
-  title: string
-  url: string
-}
-
 export function Home() {
-  const [query, setQuery] = useState("")
-  const [cases, setCases] = useState<Case[]>([])
-  const [selectedCase, setSelectedCase] = useState<Case | null>(null)
+  const [url, setUrl] = useState(
+    "https://caselaw.nationalarchives.gov.uk/ewhc/qb/2019/2381?query=miller+prime+minister&from_date=None&to_date=None&party=&judge="
+  )
   const [chronology, setChronology] = useState<DateSentence[] | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isSearching, setIsSearching] = useState(false)
 
-  const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setIsSearching(true)
-    try {
-      // Replace this with actual API call to search for cases
-      const result = await fetch(`https://caselaw.nationalarchives.gov.uk/judgments/search?=${encodeURIComponent(query)}`)
-      const data = await result.json()
-      setCases(data)
-    } catch (error) {
-      console.error("Error searching cases:", error)
-    } finally {
-      setIsSearching(false)
-    }
-  }
-
-  const handleCaseSelect = (caseId: string) => {
-    const selectedCase = cases.find(c => c.id === caseId)
-    setSelectedCase(selectedCase || null)
-  }
-
-  const handleSubmit = async () => {
-    if (!selectedCase) return
     setIsLoading(true)
     try {
-      const result = await judgmentToChronology(selectedCase.url)
+      const result = await judgmentToChronology(url)
       setChronology(result)
     } catch (error) {
       console.error("Error fetching chronology:", error)
+      // Optionally, you can set an error state here and display it to the user
     } finally {
       setIsLoading(false)
     }
@@ -80,63 +53,38 @@ export function Home() {
         <CardHeader>
           <CardTitle>Chronology of a Judgment</CardTitle>
           <CardDescription>
-            Search for a case and get a list of dates mentioned in the judgment, in chronological order.
+            Get a list of dates mentioned in a judgment, in chronological order.{" "}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSearch} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex flex-col space-y-2">
               <Input
-                type="text"
-                placeholder="Enter search query"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                type="url"
+                placeholder="https://caselaw.nationalarchives.gov.uk/uksc/2019/41"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                onFocus={(e) => {
+                  e.target.select()
+                }}
                 required
-                disabled={isSearching}
+                disabled={isLoading}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isSearching}>
-              {isSearching ? (
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Searching...
+                  Loading...
                 </>
               ) : (
                 <>
                   <Search className="mr-2 h-4 w-4" />
-                  Search Cases
+                  Search
                 </>
               )}
             </Button>
           </form>
-          {cases.length > 0 && (
-            <div className="mt-4">
-              <Select onValueChange={handleCaseSelect}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a case" />
-                </SelectTrigger>
-                <SelectContent>
-                  {cases.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {selectedCase && (
-                <Button onClick={handleSubmit} className="w-full mt-4" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Generating Chronology...
-                    </>
-                  ) : (
-                    "Generate Chronology"
-                  )}
-                </Button>
-              )}
-            </div>
-          )}
         </CardContent>
       </Card>
       {isLoading ? (
@@ -172,7 +120,49 @@ export function Home() {
             </Table>
           </CardContent>
         </Card>
-      ) : null}
+      ) : (
+        <>
+          <Card className="w-full max-w-2xl mx-auto">
+            <CardContent className="text-left py-8 text-muted-foreground">
+              <p className="text-muted-foreground">
+                <b>Quick start </b>click Search to view a rough chronology of
+                dates from the High Court's
+                <a
+                  href="https://caselaw.nationalarchives.gov.uk/ewhc/qb/2019/2381"
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {" "}
+                  Prorogation of Parliament
+                </a>{" "}
+                judgment,{" "}
+                <i>
+                  R (on the Application of Miller) v the Prime Minister [2019]
+                  EWHC 2381 (QB)
+                </i>{" "}
+                .
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="w-full max-w-2xl mx-auto">
+            <CardContent className="text-left py-8">
+              <p className="text-muted-foreground">
+                Copy and paste the URL of any other case found{" "}
+                <a
+                  href="https://caselaw.nationalarchives.gov.uk/"
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  here
+                </a>{" "}
+                for a similar chronology.
+              </p>
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   )
 }
