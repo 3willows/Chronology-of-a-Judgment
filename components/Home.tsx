@@ -129,7 +129,7 @@ export function Home() {
           <CardContent className="text-center py-8">
             <Loader2 className="h-8 w-8 animate-spin mx-auto" />
             <p className="text-muted-foreground mt-2">
-              Generating rough chronology...
+              Loading ...
             </p>
           </CardContent>
         </Card>
