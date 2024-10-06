@@ -29,23 +29,19 @@ interface DateSentence {
 }
 
 export function Home() {
-  const [url, setUrl] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
   const [chronology, setChronology] = useState<DateSentence[] | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [searchQuery, setSearchQuery] = useState("")
   const [searchResults, setSearchResults] = useState<Judgment[]>([])
   const [showDropdown, setShowDropdown] = useState(false)
 
   useEffect(() => {
     const fetchSearchResults = async () => {
-      if (true) {
+      if (searchQuery) {
         setIsLoading(true)
         try {
-          const results = await findPotentialCases("Prime Minister")
-
-          console.log(results)
-          if (!results)
-          {
+          const results = await findPotentialCases(searchQuery)
+          if (!results) {
             throw Error("no results")
           }
           setSearchResults(results)
@@ -68,7 +64,7 @@ export function Home() {
     e.preventDefault()
     setIsLoading(true)
     try {
-      const result = await judgmentToChronology(url)
+      const result = await judgmentToChronology("https://caselaw.nationalarchives.gov.uk/" + searchQuery)
       setChronology(result)
     } catch (error) {
       console.error("Error fetching chronology:", error)
@@ -78,9 +74,8 @@ export function Home() {
   }
 
   const handleResultClick = (selectedUrl: string) => {
-    setUrl(selectedUrl)
+    setSearchQuery(selectedUrl)
     setShowDropdown(false)
-    setSearchQuery("")
   }
 
   return (
@@ -89,7 +84,7 @@ export function Home() {
         <CardHeader>
           <CardTitle>Chronology of a Judgment</CardTitle>
           <CardDescription>
-            Get a list of dates mentioned in a judgment, in chronological order.
+            Search for a case or enter a URL to get a list of dates mentioned in a judgment, in chronological order.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -97,7 +92,7 @@ export function Home() {
             <div className="flex flex-col space-y-2 relative">
               <Input
                 type="text"
-                placeholder="Search for a case..."
+                placeholder="Search for a case or enter URL..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full"
@@ -118,17 +113,6 @@ export function Home() {
                   </CardContent>
                 </Card>
               )}
-              <Input
-                type="url"
-                placeholder="https://caselaw.nationalarchives.gov.uk/uksc/2019/41"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                onFocus={(e) => {
-                  e.target.select()
-                }}
-                required
-                disabled={isLoading}
-              />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
@@ -184,30 +168,14 @@ export function Home() {
           <Card className="w-full max-w-2xl mx-auto">
             <CardContent className="text-left py-8 text-muted-foreground">
               <p className="text-muted-foreground">
-                <b>Quick start </b>click Search to view a rough chronology of
-                dates from the High Court's
-                <a
-                  href="https://caselaw.nationalarchives.gov.uk/ewhc/qb/2019/2381"
-                  className="underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {" "}
-                  Prorogation of Parliament
-                </a>{" "}
-                judgment,{" "}
-                <i>
-                  R (on the Application of Miller) v the Prime Minister [2019]
-                  EWHC 2381 (QB)
-                </i>{" "}
-                .
+                <b>Quick start: </b>Enter "Prime Minister" in the search bar and click on a result, or enter a URL directly to view a rough chronology of dates from a judgment.
               </p>
             </CardContent>
           </Card>
           <Card className="w-full max-w-2xl mx-auto">
             <CardContent className="text-left py-8">
               <p className="text-muted-foreground">
-                Copy and paste the URL of any other case found{" "}
+                You can search for cases or paste the URL of any case found{" "}
                 <a
                   href="https://caselaw.nationalarchives.gov.uk/"
                   className="underline"
