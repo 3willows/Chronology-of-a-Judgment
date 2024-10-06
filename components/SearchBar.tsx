@@ -56,6 +56,13 @@ export function SearchBar({ searchQuery, setSearchQuery, showDropdown, searchRes
           )}
         </Button>
       </form>
+      {/* Example Button to fill the search bar with "Gina Miller" */}
+      <Button 
+        className="mt-4 w-full" 
+        onClick={() => setSearchQuery("Gina Miller")}
+      >
+       Example Query 
+      </Button>
     </>
   );
 }
