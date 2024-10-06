@@ -1,9 +1,9 @@
+// /app/components/Home.tsx
+
 "use client"
 
-import { useState } from "react"
-import { Search, Loader2 } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect, useCallback } from "react"
+import { Loader2 } from "lucide-react"
 import {
   Card,
   CardHeader,
@@ -11,16 +11,13 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { SearchBar } from "./SearchBar"
+import { SelectedCaseDetails } from "./SelectedCaseDetails"
+import { ChronologyTable } from "./ChronologyTable"
 import { judgmentToChronology } from "@/app/judgmentToChronology"
+import { findPotentialCases } from "@/app/fetchParseServer"
+import { Judgment } from "@/app/fetchParse"
+import { debounce } from "lodash"
 
 interface DateSentence {
   date: string
@@ -34,43 +31,69 @@ interface Case {
 }
 
 export function Home() {
-  const [query, setQuery] = useState("")
-  const [cases, setCases] = useState<Case[]>([])
-  const [selectedCase, setSelectedCase] = useState<Case | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
   const [chronology, setChronology] = useState<DateSentence[] | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isSearching, setIsSearching] = useState(false)
+  const [searchResults, setSearchResults] = useState<Judgment[]>([])
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [selectedCase, setSelectedCase] = useState<Judgment | null>(null)
 
-  const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsSearching(true)
-    try {
-      // Replace this with actual API call to search for cases
-      const result = await fetch(`https://caselaw.nationalarchives.gov.uk/judgments/search?=${encodeURIComponent(query)}`)
-      const data = await result.json()
-      setCases(data)
-    } catch (error) {
-      console.error("Error searching cases:", error)
-    } finally {
-      setIsSearching(false)
+  // Create a debounced function for fetching search results
+  const debouncedFetchSearchResults = useCallback(
+    debounce(async (query) => {
+      if (query) {
+        setIsLoading(true)
+        try {
+          const results = await findPotentialCases(query)
+          if (!results) {
+            throw Error("no results")
+          }
+          setSearchResults(results)
+          setShowDropdown(true)
+        } catch (error) {
+          console.error("Error fetching search results:", error)
+        } finally {
+          setIsLoading(false)
+        }
+      } else {
+        setSearchResults([])
+        setShowDropdown(false)
+      }
+    }, 500),
+    []
+  )
+
+  // Effect to call the debounced function when searchQuery changes
+  useEffect(() => {
+    debouncedFetchSearchResults(searchQuery)
+    return () => {
+      debouncedFetchSearchResults.cancel()
     }
-  }
+  }, [searchQuery, debouncedFetchSearchResults])
 
-  const handleCaseSelect = (caseId: string) => {
-    const selectedCase = cases.find(c => c.id === caseId)
-    setSelectedCase(selectedCase || null)
-  }
+  const handleResultClick = async (selectedUrl: string) => {
+    const selectedResult = searchResults.find(
+      (result) => result.url === selectedUrl
+    )
 
-  const handleSubmit = async () => {
-    if (!selectedCase) return
-    setIsLoading(true)
-    try {
-      const result = await judgmentToChronology(selectedCase.url)
-      setChronology(result)
-    } catch (error) {
-      console.error("Error fetching chronology:", error)
-    } finally {
-      setIsLoading(false)
+    if (selectedResult) {
+      setSelectedCase(selectedResult) // Set selected case correctly
+      setSearchQuery("") // Clear the search query
+      setShowDropdown(false)
+
+      // Fetch chronology for the selected case
+      setIsLoading(true)
+      try {
+        const result = await judgmentToChronology(
+          "https://caselaw.nationalarchives.gov.uk/" + selectedUrl
+        )
+        setChronology(result)
+      } catch (error) {
+        console.error("Error fetching chronology:", error)
+      } finally {
+        setIsLoading(false)
+      }
+
     }
   }
 
@@ -79,66 +102,28 @@ export function Home() {
       <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle>Chronology of a Judgment</CardTitle>
-          <CardDescription>
-            Search for a case and get a list of dates mentioned in the judgment, in chronological order.
+          <CardDescription className="text-xl">
+            Search for a case, and get a list of dates referred to in the
+            judgment.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSearch} className="space-y-4">
-            <div className="flex flex-col space-y-2">
-              <Input
-                type="text"
-                placeholder="Enter search query"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                required
-                disabled={isSearching}
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={isSearching}>
-              {isSearching ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Searching...
-                </>
-              ) : (
-                <>
-                  <Search className="mr-2 h-4 w-4" />
-                  Search Cases
-                </>
-              )}
-            </Button>
-          </form>
-          {cases.length > 0 && (
-            <div className="mt-4">
-              <Select onValueChange={handleCaseSelect}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a case" />
-                </SelectTrigger>
-                <SelectContent>
-                  {cases.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {selectedCase && (
-                <Button onClick={handleSubmit} className="w-full mt-4" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Generating Chronology...
-                    </>
-                  ) : (
-                    "Generate Chronology"
-                  )}
-                </Button>
-              )}
-            </div>
-          )}
+          <SearchBar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            showDropdown={showDropdown}
+            searchResults={searchResults}
+            handleResultClick={handleResultClick}
+            isLoading={isLoading}
+          />
+
         </CardContent>
       </Card>
+
+      {/* Display selected case information */}
+      {selectedCase && <SelectedCaseDetails selectedCase={selectedCase} />}
+
+      {/* Loading state for chronology generation */}
       {isLoading ? (
         <Card className="w-full max-w-2xl mx-auto">
           <CardContent className="text-center py-8">
@@ -149,30 +134,44 @@ export function Home() {
           </CardContent>
         </Card>
       ) : chronology ? (
+        <ChronologyTable chronology={chronology} />
+      ) : (
         <Card className="w-full max-w-2xl mx-auto">
           <CardHeader>
-            <CardTitle>Rough Chronology</CardTitle>
+            <CardTitle className="text-xl">Source and Limitations</CardTitle>
+            <CardDescription className="text-xl">
+              The information is sourced from the National Archive's{" "}
+              <a
+                href="https://caselaw.nationalarchives.gov.uk/"
+                className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Find Case Law website
+              </a>
+              , and coverage is{" "}
+              <a
+                href="https://rozenberg.substack.com/p/find-case-law"
+                className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                less extensive
+              </a>{" "}
+              than{" "}
+              <a
+                href="https://bailii.org/"
+                className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                BAILII
+              </a>{" "}
+              or commercial providers.
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px]">Date</TableHead>
-                  <TableHead>Event</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {chronology.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">{item.date}</TableCell>
-                    <TableCell>{item.sentence}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
         </Card>
-      ) : null}
+      )}
     </div>
   )
 }
