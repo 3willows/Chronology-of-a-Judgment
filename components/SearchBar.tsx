@@ -36,7 +36,7 @@ export function SearchBar({ searchQuery, setSearchQuery, showDropdown, searchRes
                     className="w-full justify-start text-left p-2 hover:bg-accent"
                     onClick={() => result.url && handleResultClick(result.url)}
                   >
-                    {result.title}
+                    {result.title} + {result.citation}
                   </Button>
                 ))}
               </CardContent>
