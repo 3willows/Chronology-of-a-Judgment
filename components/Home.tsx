@@ -141,7 +141,16 @@ export function Home() {
               >
                 Find Case Law website
               </a>
-              , and coverage is less extensive than{" "}
+              , and coverage is{" "}
+              <a
+                href="https://rozenberg.substack.com/p/find-case-law"
+                className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                less extensive
+              </a>{" "}
+              than{" "}
               <a
                 href="https://bailii.org/"
                 className="underline"
