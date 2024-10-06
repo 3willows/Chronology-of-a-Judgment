@@ -51,17 +51,9 @@ export function Home() {
     <div className="container mx-auto p-4 space-y-8">
       <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle>Chronology of a Judgment (Beta)</CardTitle>
+          <CardTitle>Chronology of a Judgment</CardTitle>
           <CardDescription>
-            Enter a link to a Judgment from the National Archive's{" "}
-            <a
-              href="https://caselaw.nationalarchives.gov.uk/"
-              className="underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Find Case Law
-            </a>
+            Get a list of dates mentioned in a judgment, in chronological order.{" "}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -133,29 +125,39 @@ export function Home() {
           <Card className="w-full max-w-2xl mx-auto">
             <CardContent className="text-left py-8 text-muted-foreground">
               <p className="text-muted-foreground">
-                <b>Quick start </b>click Search to view a rough chronology of dates from the High Court's
-                 <a
+                <b>Quick start </b>click Search to view a rough chronology of
+                dates from the High Court's
+                <a
                   href="https://caselaw.nationalarchives.gov.uk/ewhc/qb/2019/2381"
                   className="underline"
                   target="_blank"
                   rel="noopener noreferrer"
-                > Prorogation of Parliament
+                >
+                  {" "}
+                  Prorogation of Parliament
                 </a>{" "}
-                judgment, <i>R (on the Application of Miller) v the Prime Minister [2019] EWHC 2381 (QB)</i> .
+                judgment,{" "}
+                <i>
+                  R (on the Application of Miller) v the Prime Minister [2019]
+                  EWHC 2381 (QB)
+                </i>{" "}
+                .
               </p>
             </CardContent>
           </Card>
           <Card className="w-full max-w-2xl mx-auto">
             <CardContent className="text-left py-8">
               <p className="text-muted-foreground">
-                Copy and paste the URL of any other case found <a
-              href="https://caselaw.nationalarchives.gov.uk/"
-              className="underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-             here 
-            </a> for a similar chronology.
+                Copy and paste the URL of any other case found{" "}
+                <a
+                  href="https://caselaw.nationalarchives.gov.uk/"
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  here
+                </a>{" "}
+                for a similar chronology.
               </p>
             </CardContent>
           </Card>
