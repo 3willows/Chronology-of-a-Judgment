@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useState } from "react";
 
 interface SearchBarProps {
   searchQuery: string;
@@ -15,6 +16,13 @@ interface SearchBarProps {
 }
 
 export function SearchBar({ searchQuery, setSearchQuery, showDropdown, searchResults, handleResultClick, isLoading }: SearchBarProps) {
+  const [showExampleButton, setShowExampleButton] = useState(true);
+
+  const handleExampleClick = () => {
+    setSearchQuery("Gina Miller"); // Set the search query
+    setShowExampleButton(false); // Hide the example button
+  };
+
   return (
     <>
       <form className="space-y-4">
@@ -57,12 +65,14 @@ export function SearchBar({ searchQuery, setSearchQuery, showDropdown, searchRes
         </Button>
       </form>
       {/* Example Button to fill the search bar with "Gina Miller" */}
-      <Button 
-        className="mt-4 w-full" 
-        onClick={() => setSearchQuery("Gina Miller")}
-      >
-       Example Query 
-      </Button>
+      {showExampleButton && (
+        <Button 
+          className="mt-4 w-full" 
+          onClick={handleExampleClick} // Use the new handler
+        >
+         Example query: Gina Miller 
+        </Button>
+      )}
     </>
   );
 }
