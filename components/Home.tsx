@@ -89,8 +89,8 @@ export function Home() {
       <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle>Chronology of a Judgment</CardTitle>
-          <CardDescription>
-            Search for a case or enter a URL to get a list of dates mentioned in a judgment, in chronological order.
+          <CardDescription className="text-xl">
+            Search for a case, and get a list of dates referred to in the judgment.
           </CardDescription>
         </CardHeader>
         <CardContent>
