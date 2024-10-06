@@ -1,28 +1,17 @@
-"use client"
+// /app/components/Home.tsx
+
+"use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Search, Loader2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Loader2 } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { SearchBar } from "./SearchBar";
+import { SelectedCaseDetails } from "./SelectedCaseDetails";
+import { ChronologyTable } from "./ChronologyTable";
 import { judgmentToChronology } from "@/app/judgmentToChronology";
 import { findPotentialCases } from "@/app/fetchParseServer";
 import { Judgment } from "@/app/fetchParse";
-import { debounce } from "lodash"; // Import debounce from lodash
+import { debounce } from "lodash";
 
 interface DateSentence {
   date: string;
@@ -58,23 +47,20 @@ export function Home() {
         setSearchResults([]);
         setShowDropdown(false);
       }
-    }, 500), // Adjust the delay as needed
+    }, 500),
     []
   );
 
   // Effect to call the debounced function when searchQuery changes
   useEffect(() => {
     debouncedFetchSearchResults(searchQuery);
-    // Cleanup function to cancel the debounce on unmount
     return () => {
       debouncedFetchSearchResults.cancel();
     };
   }, [searchQuery, debouncedFetchSearchResults]);
 
   const handleResultClick = async (selectedUrl: string) => {
-    const selectedResult = searchResults.find(
-      (result) => result.url === selectedUrl
-    );
+    const selectedResult = searchResults.find((result) => result.url === selectedUrl);
     if (selectedResult) {
       setSelectedCase(selectedResult); // Set selected case correctly
       setSearchQuery(selectedUrl); // Update search query with selected URL
@@ -83,9 +69,7 @@ export function Home() {
       // Fetch chronology for the selected case
       setIsLoading(true);
       try {
-        const result = await judgmentToChronology(
-          "https://caselaw.nationalarchives.gov.uk/" + selectedUrl
-        );
+        const result = await judgmentToChronology(`https://caselaw.nationalarchives.gov.uk/${selectedUrl}`);
         setChronology(result);
       } catch (error) {
         console.error("Error fetching chronology:", error);
@@ -101,148 +85,38 @@ export function Home() {
         <CardHeader>
           <CardTitle>Chronology of a Judgment</CardTitle>
           <CardDescription>
-            Search for a case or enter a URL to get a list of dates mentioned in
-            a judgment, in chronological order.
+            Search for a case or enter a URL to get a list of dates mentioned in a judgment, in chronological order.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-            <div className="flex flex-col space-y-2 relative">
-              <Input
-                type="text"
-                placeholder="Search for a case or enter URL..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)} // Update search query directly
-                className="w-full"
-              />
-              {showDropdown && (
-                <Card className="absolute top-full left-0 right-0 mt-1 max-h-60 overflow-auto z-10">
-                  <CardContent className="p-0">
-                    {searchResults.map((result, index) => (
-                      <Button
-                        key={index}
-                        variant="ghost"
-                        className="w-full justify-start text-left p-2 hover:bg-accent"
-                        onClick={() =>
-                          result.url && handleResultClick(result.url)
-                        }
-                      >
-                        {result.title}
-                      </Button>
-                    ))}
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Loading...
-                </>
-              ) : (
-                <>
-                  <Search className="mr-2 h-4 w-4" />
-                  Search
-                </>
-              )}
-            </Button>
-          </form>
+          <SearchBar 
+            searchQuery={searchQuery} 
+            setSearchQuery={setSearchQuery}
+            showDropdown={showDropdown}
+            searchResults={searchResults}
+            handleResultClick={handleResultClick}
+            isLoading={isLoading}
+          />
         </CardContent>
       </Card>
 
       {/* Display selected case information */}
-      {selectedCase && (
-        <Card className="w-full max-w-2xl mx-auto mt-8">
-          <CardHeader>
-            <CardTitle>Selected Case Details</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p><strong>Title:</strong> {selectedCase.title}</p>
-            {selectedCase.court && (
-              <p><strong>Court:</strong> {selectedCase.court}</p>
-            )}
-            {selectedCase.citation && (
-              <p><strong>Citation:</strong> {selectedCase.citation}</p>
-            )}
-            {selectedCase.date && (
-              <p><strong>Date:</strong> {selectedCase.date}</p>
-            )}
-            {selectedCase.url && (
-              <p><strong>URL:</strong> 
-                <a href={`https://caselaw.nationalarchives.gov.uk/"${selectedCase.url}`} target="_blank" rel="noopener noreferrer" className="underline">
-                  View Case
-                </a>
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      )}
+      {selectedCase && <SelectedCaseDetails selectedCase={selectedCase} />}
 
       {/* Loading state for chronology generation */}
       {isLoading ? (
         <Card className="w-full max-w-2xl mx-auto">
           <CardContent className="text-center py-8">
             <Loader2 className="h-8 w-8 animate-spin mx-auto" />
-            <p className="text-muted-foreground mt-2">
-              Generating rough chronology...
-            </p>
+            <p className="text-muted-foreground mt-2">Generating rough chronology...</p>
           </CardContent>
         </Card>
       ) : chronology ? (
-        <Card className="w-full max-w-2xl mx-auto">
-          <CardHeader>
-            <CardTitle>Rough Chronology</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px]">Date</TableHead>
-                  <TableHead>Event</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {chronology.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">{item.date}</TableCell>
-                    <TableCell>{item.sentence}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        <ChronologyTable chronology={chronology} />
       ) : (
         <>
           {/* Instructions for users */}
-          <Card className="w-full max-w-2xl mx-auto">
-            <CardContent className="text-left py-8 text-muted-foreground">
-              <p className="text-muted-foreground">
-                <b>Quick start: </b>Enter "Prime Minister" in the search bar and
-                click on a result, or enter a URL directly to view a rough
-                chronology of dates from a judgment.
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Additional instructions */}
-          <Card className="w-full max-w-2xl mx-auto">
-            <CardContent className="text-left py-8">
-              <p className="text-muted-foreground">
-                You can search for cases or paste the URL of any case found{" "}
-                <a
-                  href="https://caselaw.nationalarchives.gov.uk/"
-                  className="underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  here
-                </a>{" "}
-                for a similar chronology.
-              </p>
-            </CardContent>
-          </Card>
+          {/* Add your instructions here */}
         </>
       )}
     </div>
