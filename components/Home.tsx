@@ -20,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { judgmentToChronology } from "@/app/judgmentToChronology"
-import { printResult } from "@/app/fetchParseServer"
+import { findPotentialCases } from "@/app/fetchParseServer"
 import { Judgment } from "@/app/fetchParse"
 
 interface DateSentence {
@@ -41,7 +41,7 @@ export function Home() {
       if (true) {
         setIsLoading(true)
         try {
-          const results = await printResult()
+          const results = await findPotentialCases("Prime Minister")
 
           console.log(results)
           if (!results)
