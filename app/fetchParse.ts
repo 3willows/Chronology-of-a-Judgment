@@ -40,11 +40,9 @@ function parseJudgments(html: string): Judgment[] {
   })
 }
 
-export async function getResults(): Promise<Judgment[] | undefined> {
+export async function fetchParse(url : string): Promise<Judgment[] | undefined> {
   try {
-    const response = await fetch(
-      "https://caselaw.nationalarchives.gov.uk/judgments/search?per_page=10&order=relevance&query=Gina+Miller&from_date_0=&from_date_1=&from_date_2=&to_date_0=&to_date_1=&to_date_2=&party=&judge="
-    )
+    const response = await fetch(url)
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)

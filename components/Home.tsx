@@ -38,10 +38,12 @@ export function Home() {
 
   useEffect(() => {
     const fetchSearchResults = async () => {
-      if (searchQuery.length > 2) {
+      if (true) {
         setIsLoading(true)
         try {
           const results = await printResult()
+
+          console.log(results)
           if (!results)
           {
             throw Error("no results")
