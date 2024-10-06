@@ -1,16 +1,16 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Search, Loader2 } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect, useCallback } from "react";
+import { Search, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -18,65 +18,76 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { judgmentToChronology } from "@/app/judgmentToChronology"
-import { findPotentialCases } from "@/app/fetchParseServer"
-import { Judgment } from "@/app/fetchParse"
+} from "@/components/ui/table";
+import { judgmentToChronology } from "@/app/judgmentToChronology";
+import { findPotentialCases } from "@/app/fetchParseServer";
+import { Judgment } from "@/app/fetchParse";
+import { debounce } from "lodash"; // Import debounce from lodash
 
 interface DateSentence {
-  date: string
-  sentence: string
+  date: string;
+  sentence: string;
 }
 
 export function Home() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [chronology, setChronology] = useState<DateSentence[] | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [searchResults, setSearchResults] = useState<Judgment[]>([])
-  const [showDropdown, setShowDropdown] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("");
+  const [chronology, setChronology] = useState<DateSentence[] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchResults, setSearchResults] = useState<Judgment[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  useEffect(() => {
-    const fetchSearchResults = async () => {
-      if (searchQuery) {
-        setIsLoading(true)
+  // Create a debounced function for fetching search results
+  const debouncedFetchSearchResults = useCallback(
+    debounce(async (query) => {
+      if (query) {
+        setIsLoading(true);
         try {
-          const results = await findPotentialCases(searchQuery)
+          const results = await findPotentialCases(query);
           if (!results) {
-            throw Error("no results")
+            throw Error("no results");
           }
-          setSearchResults(results)
-          setShowDropdown(true)
+          setSearchResults(results);
+          setShowDropdown(true);
         } catch (error) {
-          console.error("Error fetching search results:", error)
+          console.error("Error fetching search results:", error);
         } finally {
-          setIsLoading(false)
+          setIsLoading(false);
         }
       } else {
-        setSearchResults([])
-        setShowDropdown(false)
+        setSearchResults([]);
+        setShowDropdown(false);
       }
-    }
+    }, 500), // Adjust the delay as needed
+    []
+  );
 
-    fetchSearchResults()
-  }, [searchQuery])
+  // Effect to call the debounced function when searchQuery changes
+  useEffect(() => {
+    debouncedFetchSearchResults(searchQuery);
+
+    // Cleanup function to cancel the debounce on unmount
+    return () => {
+      debouncedFetchSearchResults.cancel();
+    };
+  }, [searchQuery, debouncedFetchSearchResults]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
     try {
-      const result = await judgmentToChronology("https://caselaw.nationalarchives.gov.uk/" + searchQuery)
-      setChronology(result)
+      const result = await judgmentToChronology("https://caselaw.nationalarchives.gov.uk/" + searchQuery);
+      setChronology(result);
     } catch (error) {
-      console.error("Error fetching chronology:", error)
+      console.error("Error fetching chronology:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleResultClick = (selectedUrl: string) => {
-    setSearchQuery(selectedUrl)
-    setShowDropdown(false)
-  }
+    setSearchQuery(selectedUrl);
+    setShowDropdown(false);
+  };
 
   return (
     <div className="container mx-auto p-4 space-y-8">
@@ -94,7 +105,7 @@ export function Home() {
                 type="text"
                 placeholder="Search for a case or enter URL..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => setSearchQuery(e.target.value)} // Update search query directly
                 className="w-full"
               />
               {showDropdown && (
@@ -105,7 +116,7 @@ export function Home() {
                         key={index}
                         variant="ghost"
                         className="w-full justify-start text-left p-2 hover:bg-accent"
-                        onClick={() => handleResultClick(result.url)}
+                        onClick={() => result.url && handleResultClick(result.url)}
                       >
                         {result.title}
                       </Button>
@@ -130,6 +141,8 @@ export function Home() {
           </form>
         </CardContent>
       </Card>
+
+      {/* Loading state for chronology generation */}
       {isLoading ? (
         <Card className="w-full max-w-2xl mx-auto">
           <CardContent className="text-center py-8">
@@ -165,6 +178,7 @@ export function Home() {
         </Card>
       ) : (
         <>
+          {/* Instructions for users */}
           <Card className="w-full max-w-2xl mx-auto">
             <CardContent className="text-left py-8 text-muted-foreground">
               <p className="text-muted-foreground">
@@ -172,6 +186,8 @@ export function Home() {
               </p>
             </CardContent>
           </Card>
+
+          {/* Additional instructions */}
           <Card className="w-full max-w-2xl mx-auto">
             <CardContent className="text-left py-8">
               <p className="text-muted-foreground">
@@ -191,5 +207,5 @@ export function Home() {
         </>
       )}
     </div>
-  )
+  );
 }
