@@ -20,6 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { judgmentToChronology } from "@/app/judgmentToChronology"
+import { printResult } from "@/app/fetchParseServer"
 
 interface DateSentence {
   date: string
@@ -35,6 +36,7 @@ export function Home() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    await printResult()
     setIsLoading(true)
     try {
       const result = await judgmentToChronology(url)
