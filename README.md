@@ -1,6 +1,6 @@
 # Demo
 
-[here](https://judgment-to-rough-chronology.vercel.app/)
+[here](https://chronology-of-a-judgment.3willows.xyz/)
 
 ## Initial plan
 
