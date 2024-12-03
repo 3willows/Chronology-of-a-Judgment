@@ -103,6 +103,7 @@ export function Home() {
         <CardHeader>
           <CardTitle>Chronology of a Judgment</CardTitle>
           <CardDescription className="text-xl">
+            (Archived: no longer works due to change in National Archives formatting)
             Search for a case, and get a list of dates referred to in the
             judgment.
           </CardDescription>
